@@ -1,0 +1,16 @@
+---
+name: build
+on:
+  push:
+    branches:
+      - main
+
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  build:
+    uses: sebastian-toepfer/gh-common/blob/main/.github/workflows/build.yml
+    with:
+        sonar.projektKey: sebastian-toepfer_pdfbox-fluent-layout
+    secrets: inherit
