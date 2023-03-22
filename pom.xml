@@ -407,4 +407,18 @@
         </plugins>
     </build>
 
+    <profiles>
+        <profile>
+            <id>ci</id>
+            <activation>
+                <property>
+                    <name>env.CI</name>
+                </property>
+            </activation>
+
+            <properties>
+                <prettier.goal>check</prettier.goal>
+            </properties>
+        </profile>
+    </profiles>
 </project>
