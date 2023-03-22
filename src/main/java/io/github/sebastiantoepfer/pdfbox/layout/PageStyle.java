@@ -47,12 +47,24 @@ public class PageStyle {
             );
         }
 
+        float width() {
+            return margins.artBox(mediaBox).getWidth();
+        }
+
+        void setLeading(final float leading) throws IOException {
+            pageContentStream.setLeading(leading);
+        }
+
         void setFont(final PDType1Font font, final int size) throws IOException {
             pageContentStream.setFont(font, size);
         }
 
         void showText(final String text) throws IOException {
             pageContentStream.showText(text);
+        }
+
+        void newLine() throws IOException {
+            pageContentStream.newLine();
         }
 
         void endText() throws IOException {

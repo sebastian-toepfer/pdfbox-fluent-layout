@@ -23,28 +23,35 @@
  */
 package io.github.sebastiantoepfer.pdfbox.layout;
 
-import org.apache.pdfbox.pdmodel.common.PDRectangle;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import java.io.IOException;
+import org.apache.pdfbox.pdmodel.font.PDType1Font;
 
-public class Margins {
+public class PDFFont {
 
-    private final float left;
-    private final float top;
-    private final float right;
-    private final float bottom;
+    private final PDType1Font font;
+    private final int size;
 
-    public Margins(final float top, final float right, final float bottom, final float left) {
-        this.top = top;
-        this.right = right;
-        this.bottom = bottom;
-        this.left = left;
+    @SuppressFBWarnings("EI_EXPOSE_REP2")
+    public PDFFont(final PDType1Font font, final int size) {
+        this.font = font;
+        this.size = size;
     }
 
-    public PDRectangle artBox(final PDRectangle mediaBox) {
-        return new PDRectangle(
-            mediaBox.getLowerLeftX() + left,
-            mediaBox.getLowerLeftY() + bottom,
-            mediaBox.getWidth() - left - right,
-            mediaBox.getHeight() - top - bottom
-        );
+    float calculateLineWidthFor(final String text) throws IOException {
+        return forCurrentFontSize(font.getStringWidth(text));
+    }
+
+    void apply(final PageStyle.PDFContentStream stream) {
+        try {
+            stream.setFont(font, size);
+            stream.setLeading(forCurrentFontSize(font.getBoundingBox().getHeight()));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private float forCurrentFontSize(final float baseValue) {
+        return baseValue / 1000 * size;
     }
 }

@@ -26,13 +26,14 @@ package io.github.sebastiantoepfer.pdfbox.layout;
 import static io.github.sebastiantoepfer.pdfbox.layout.hamcrest.PDDocumentAssert.assertThat;
 import static io.github.sebastiantoepfer.pdfbox.layout.hamcrest.pd.DocumentMatchers.hasPageNumberWith;
 import static io.github.sebastiantoepfer.pdfbox.layout.hamcrest.pd.PageMatchers.hasTextContent;
+import static org.hamcrest.Matchers.startsWith;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.junit.jupiter.api.Test;
 
-public class TextLayoutTest {
+class TextLayoutTest {
 
     @Test
     void should_create_text_at_top_with_given_margin() throws Exception {
@@ -45,6 +46,52 @@ public class TextLayoutTest {
         assertThat(
             new ByteArrayInputStream(baos.toByteArray()),
             hasPageNumberWith(1, hasTextContent("Hallo PDF", 50, PDRectangle.A4.getHeight() - 50))
+        );
+    }
+
+    @Test
+    void should_create_multiline_text_for_long_string_with_newline() throws Exception {
+        final PDFPages doc = new PDFDocument()
+            .newPage(new PageStyle(new PDRectangle(604F, 700F)).withMargin(new Margins(50, 50, 50, 50)))
+            .withText(
+                "Lorem ipsum dolor sit amet sed diam\nconsetetur sadipscing elitr, seddia nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet."
+            );
+        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        doc.renderTo(baos);
+
+        assertThat(
+            new ByteArrayInputStream(baos.toByteArray()),
+            hasPageNumberWith(
+                1,
+                hasTextContent(
+                    startsWith("Lorem ipsum dolor sit amet sed diam\nconsetetur sadipscing elitr, seddia\n"),
+                    50,
+                    650
+                )
+            )
+        );
+    }
+
+    @Test
+    void should_create_multiline_text_for_long_string() throws Exception {
+        final PDFPages doc = new PDFDocument()
+            .newPage(new PageStyle(new PDRectangle(604F, 700F)).withMargin(new Margins(50, 50, 50, 50)))
+            .withText(
+                "Lorem ipsum dolor sit amet sed diam consetetur sadipscing elitr, seddia nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet."
+            );
+        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        doc.renderTo(baos);
+
+        assertThat(
+            new ByteArrayInputStream(baos.toByteArray()),
+            hasPageNumberWith(
+                1,
+                hasTextContent(
+                    startsWith("Lorem ipsum dolor sit amet sed diam\nconsetetur sadipscing elitr, seddia\n"),
+                    50,
+                    650
+                )
+            )
         );
     }
 }

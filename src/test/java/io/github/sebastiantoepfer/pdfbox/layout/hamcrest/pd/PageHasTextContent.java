@@ -1,7 +1,5 @@
 package io.github.sebastiantoepfer.pdfbox.layout.hamcrest.pd;
 
-import static org.hamcrest.Matchers.containsString;
-
 import io.github.sebastiantoepfer.pdfbox.layout.hamcrest.pd.AtPosition.Position;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -23,12 +21,12 @@ class PageHasTextContent extends TypeSafeMatcher<PDPage> {
     private final Matcher<String> content;
     private final Matcher<Position> hasPosition;
 
-    public PageHasTextContent(final String content) {
+    PageHasTextContent(final Matcher<String> content) {
         this(content, new Any<>("Position"));
     }
 
-    PageHasTextContent(final String content, final Matcher<Position> hasPosition) {
-        this.content = containsString(Objects.requireNonNull(content));
+    PageHasTextContent(final Matcher<String> content, final Matcher<Position> hasPosition) {
+        this.content = Objects.requireNonNull(content);
         this.hasPosition = Objects.requireNonNull(hasPosition);
     }
 
@@ -58,6 +56,7 @@ class PageHasTextContent extends TypeSafeMatcher<PDPage> {
         try {
             if (item.hasContents()) {
                 final List<Float> numbers = new ArrayList<>();
+                boolean multiline = false;
                 final PDFStreamParser parser = new PDFStreamParser(item);
                 parser.parse();
                 final List<Object> pageTokens = parser.getTokens();
@@ -65,7 +64,14 @@ class PageHasTextContent extends TypeSafeMatcher<PDPage> {
                     if (token instanceof Operator op) {
                         final String currentOperatorName = op.getName();
                         switch (currentOperatorName) {
-                            case OperatorName.NEXT_LINE -> sb.append('\n');
+                            case OperatorName.NEXT_LINE -> {
+                                if (multiline) {
+                                    sb.append('\n');
+                                }
+                            }
+                            case OperatorName.SET_TEXT_LEADING -> {
+                                multiline = numbers.size() == 1 && numbers.iterator().next() > 0;
+                            }
                             case OperatorName.MOVE_TEXT -> {
                                 if (numbers.size() == 2) {
                                     position = new Position(numbers.get(0), numbers.get(1));

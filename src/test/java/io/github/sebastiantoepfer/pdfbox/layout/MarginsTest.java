@@ -33,6 +33,6 @@ class MarginsTest {
 
     @Test
     void should_create_arbox_within_given_margins() {
-        assertThat(new Margins(10, 10, 20, 20).artBox(new PDRectangle(60, 60)), isRectangle(10, 20, 30, 30));
+        assertThat(new Margins(10, 20, 20, 10).artBox(new PDRectangle(60, 60)), isRectangle(10, 20, 30, 30));
     }
 }
