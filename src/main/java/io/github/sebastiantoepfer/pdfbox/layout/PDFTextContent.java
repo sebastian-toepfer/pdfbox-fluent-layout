@@ -31,6 +31,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.regex.Pattern;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
+import org.apache.pdfbox.pdmodel.font.Standard14Fonts;
 
 class PDFTextContent implements PDFPages.PDFContents {
 
@@ -65,7 +66,7 @@ class PDFTextContent implements PDFPages.PDFContents {
     void apply(final PDFContentStream stream) {
         try {
             stream.beginText();
-            final PDFFont font = new PDFFont(PDType1Font.COURIER, 24);
+            final PDFFont font = new PDFFont(new PDType1Font(Standard14Fonts.FontName.COURIER), 24);
             font.apply(stream);
             for (String line : new MultiLineText(text, font, stream.width()).lines()) {
                 stream.showText(line);
