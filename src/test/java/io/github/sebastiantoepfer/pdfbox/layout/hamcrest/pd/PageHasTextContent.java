@@ -81,9 +81,7 @@ class PageHasTextContent extends TypeSafeMatcher<PDPage> {
                 final List<Float> numbers = new ArrayList<>();
                 boolean multiline = false;
                 final PDFStreamParser parser = new PDFStreamParser(item);
-                parser.parse();
-                final List<Object> pageTokens = parser.getTokens();
-                for (Object token : pageTokens) {
+                for (Object token = parser.parseNextToken(); token != null; token = parser.parseNextToken()) {
                     if (token instanceof Operator op) {
                         final String currentOperatorName = op.getName();
                         switch (currentOperatorName) {

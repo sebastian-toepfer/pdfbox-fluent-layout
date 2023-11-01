@@ -30,6 +30,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Locale;
+import org.apache.pdfbox.Loader;
+import org.apache.pdfbox.io.RandomAccessReadBuffer;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.hamcrest.Matcher;
 import org.hamcrest.MatcherAssert;
@@ -38,7 +40,7 @@ public class PDDocumentAssert {
 
     public static void assertThat(final InputStream actual, final Matcher<? super PDDocument> matcher)
         throws IOException {
-        assertThat(PDDocument.load(actual), matcher);
+        assertThat(Loader.loadPDF(new RandomAccessReadBuffer(actual)), matcher);
     }
 
     public static void assertThat(final PDDocument actual, final Matcher<? super PDDocument> matcher) {
